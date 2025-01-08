@@ -4,83 +4,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr Analyzer </title>
+    <title>Mr Analyzer</title>
     <link rel="icon" href="https://www.safesecureaudit.com/static/assets/images/profile.avif">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Additional Tailwind customization */
         .gradient-bg {
-            background: linear-gradient(135deg, #4b5563, #1f2937);
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+        }
+
+        .gradient-border {
+            border-image: linear-gradient(135deg, #6a11cb, #2575fc) 1;
         }
 
         .chat-box {
-            border: 1px solid #4b5563;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid transparent;
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
         }
 
         .input-container {
-            border: 1px solid #4b5563;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
         }
 
         .message {
             border-radius: 1rem;
-            padding: 0.5rem 1rem;
-            margin-bottom: 0.5rem;
-            max-width: 75%;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0.75rem;
+            max-width: 70%;
+            line-height: 1.5;
+            word-wrap: break-word;
         }
 
         .user-message {
-            background-color: #3b82f6; /* Blue for user messages */
+            background-color: #3182ce; /* User message in blue */
             color: white;
-            margin-left: auto; /* Align user messages to the right */
+            margin-left: auto; /* Align to the right */
         }
 
         .bot-message {
-            background-color: #4b5563; /* Gray for bot messages */
-            color: white;
+            background-color: #e2e8f0; /* Bot message in light gray */
+            color: #2d3748;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background-color: #edf2f7;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loader {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top: 3px solid #3182ce;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-gray-900 text-gray-200 font-sans flex flex-col">
-    
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-200 text-gray-700 font-sans flex flex-col">
     <!-- Navbar -->
     <header class="fixed top-0 left-0 right-0 gradient-bg py-4 shadow-lg z-10 rounded-b-lg">
         <nav class="container mx-auto px-4 flex justify-between items-center">
             <h1 class="text-3xl font-bold text-white">Mr Analyzer</h1>
-            <!-- <div>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Home</button>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">About</button>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Contact</button>
-            </div> -->
         </nav>
     </header>
 
+    <!-- Main Content -->
     <main class="container mx-auto px-4 py-20 mt-16 flex-grow">
-        
-        <!-- Chatbot Section -->
-        <section class="bg-gray-800 rounded-lg shadow-md p-6 h-full">
-            <h2 class="text-2xl font-semibold mb-4">Write your queries</h2>
+        <!-- Redesigned Chatbot Section -->
+        <section class="bg-white rounded-xl shadow-lg p-6 gradient-border" style="border-width: 2px;">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-6 text-center">
+                Analyze Data Insights
+            </h2>
 
-            <div class="chat-box h-96 overflow-y-auto bg-gray-700 p-4 mb-4">
-                <div class="message bot-message">
-                    Hello! How can i help with your data?
+            <!-- Chat Box -->
+            <div class="chat-box h-96 overflow-y-auto rounded-lg p-6 shadow-inner">
+                <!-- Bot Message -->
+                <div class="message bot-message p-4 mb-4 rounded-lg shadow-md">
+                    Welcome! I'm here to assist you with data analysis. How can I help?
                 </div>
             </div>
 
-            <div class="input-container flex gap-4 mb-4">
-                <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off"
-                    class="flex-1 px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">
+            <!-- Input Container -->
+            <div class="input-container flex gap-4 mt-4">
+                <input type="text" id="user-input" placeholder="Ask about your data insights..." autocomplete="off"
+                    class="flex-1 px-4 py-3 rounded-lg bg-gray-100 text-gray-700 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200 ease-in-out shadow-sm placeholder-gray-500">
                 <button id="send-btn"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Send</button>
+                    class="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-300 ease-in-out">
+                    Send
+                </button>
             </div>
         </section>
     </main>
 
+ 
+
     <!-- Footer -->
-    <footer class="gradient-bg py-4 mt-8">
-        <p class="text-center text-gray-300">&copy; 2025 Social Media Analyzer. All rights reserved.</p>
+    <footer class="gradient-bg py-4 mt-8 rounded-t-lg">
+        <p class="text-center text-white font-medium">&copy; 2025 Data Insight Chatbot. All rights reserved.</p>
     </footer>
 
     <!-- JavaScript -->
@@ -88,7 +148,7 @@
         // Chatbot Functionality
         document.getElementById('send-btn').addEventListener('click', sendMessage);
 
-        document.getElementById('user-input').addEventListener(' keypress', function (e) {
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }
@@ -102,8 +162,21 @@
             document.getElementById('user-input').value = ''; // Clear input field
 
             const typingIndicator = document.createElement('div');
-            typingIndicator.classList.add('message', 'bot-message');
-            typingIndicator.textContent = 'Bot is typing...';
+            typingIndicator.classList.add('message', 'bot-message', 'fade-in');
+
+            const loaderContainer = document.createElement('div');
+            loaderContainer.classList.add('loader-container');
+            
+            const loader = document.createElement('div');
+            loader.classList.add('loader');
+            loaderContainer.appendChild(loader);
+            
+            const analyzingText = document.createElement('span');
+            analyzingText.textContent = 'Analyzing data...';
+            loaderContainer.appendChild(analyzingText);
+
+            typingIndicator.appendChild(loaderContainer);
+
             document.querySelector('.chat-box').appendChild(typingIndicator);
             document.querySelector('.chat-box').scrollTop = document.querySelector('.chat-box').scrollHeight; // Scroll to latest message
 
@@ -116,7 +189,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    const botMessage = data.reply || 'Sorry, I did not understand that.';
+                    const botMessage = data.reply || 'Sorry, I couldn\'t analyze that.';
                     appendMessage(botMessage, 'bot-message');
                     typingIndicator.remove();
                 })
@@ -129,13 +202,7 @@
         function appendMessage(message, messageType) {
             const chatBox = document.querySelector('.chat-box');
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', messageType);
-
-            if (messageType === 'user-message') {
-                messageDiv.classList.add('user-message');
-            } else {
-                messageDiv.classList.add('bot-message');
-            }
+            messageDiv.classList.add('message', messageType, 'fade-in');
 
             messageDiv.textContent = message;
             chatBox.appendChild(messageDiv);

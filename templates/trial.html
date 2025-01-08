@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Insight Chatbot</title>
+    <link rel="icon" href="https://www.safesecureaudit.com/static/assets/images/profile.avif">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tailwind customization */
+        .gradient-bg {
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+        }
+
+        .chat-box {
+            border: 1px solid #2d3748;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .input-container {
+            border: 1px solid #2d3748;
+            border-radius: 0.75rem;
+        }
+
+        .message {
+            border-radius: 1rem;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 0.75rem;
+            max-width: 70%;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #3182ce; /* User message in blue */
+            color: white;
+            margin-left: auto; /* Align to the right */
+        }
+
+        .bot-message {
+            background-color: #2d3748; /* Bot message in dark gray */
+            color: white;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background-color: #1a202c;
+        }
+
+        /* Subtle animations */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-900 text-gray-200 font-sans flex flex-col">
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 gradient-bg py-4 shadow-lg z-10 rounded-b-lg">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-white">Data Insight Chatbot</h1>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-20 mt-16 flex-grow">
+        <!-- Chatbot Section -->
+        <section class="bg-gray-800 rounded-lg shadow-md p-6 h-full">
+            <h2 class="text-2xl font-semibold mb-4">Analyze Data Insights</h2>
+
+            <div class="chat-box h-96 overflow-y-auto bg-gray-700 p-4 mb-4">
+                <div class="message bot-message fade-in">
+                    Welcome! I'm here to assist you with data analysis. How can I help?
+                </div>
+            </div>
+
+            <div class="input-container flex gap-4">
+                <input type="text" id="user-input" placeholder="Ask about your data insights..." autocomplete="off"
+                    class="flex-1 px-4 py-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">
+                <button id="send-btn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Send</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg py-4 mt-8">
+        <p class="text-center text-gray-300">&copy; 2025 Data Insight Chatbot. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Chatbot Functionality
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const userMessage = document.getElementById('user-input').value.trim();
+            if (userMessage === '') return;
+
+            appendMessage(userMessage, 'user-message');
+            document.getElementById('user-input').value = ''; // Clear input field
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('message', 'bot-message', 'fade-in');
+            typingIndicator.textContent = 'Analyzing data...';
+            document.querySelector('.chat-box').appendChild(typingIndicator);
+            document.querySelector('.chat-box').scrollTop = document.querySelector('.chat-box').scrollHeight; // Scroll to latest message
+
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessage = data.reply || 'Sorry, I couldn\'t analyze that.';
+                    appendMessage(botMessage, 'bot-message');
+                    typingIndicator.remove();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    typingIndicator.remove();
+                });
+        }
+
+        function appendMessage(message, messageType) {
+            const chatBox = document.querySelector('.chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', messageType, 'fade-in');
+
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to latest message
+        }
+    </script>
+</body>
+
+</html>

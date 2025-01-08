@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Analyzer</title>
+    <link rel="icon" href="https://www.safesecureaudit.com/static/assets/images/profile.avif">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Additional Tailwind customization */
+        .gradient-bg {
+            background: linear-gradient(135deg, #4b5563, #1f2937);
+        }
+
+        .chat-box {
+            border: 1px solid #4b5563;
+            border-radius: 0.5rem;
+        }
+
+        .input-container {
+            border: 1px solid #4b5563;
+            border-radius: 0.5rem;
+        }
+
+        .message {
+            border-radius: 1rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            max-width: 75%;
+        }
+
+        .user-message {
+            background-color: #3b82f6; /* Blue for user messages */
+            color: white;
+            margin-left: auto; /* Align user messages to the right */
+        }
+
+        .bot-message {
+            background-color: #4b5563; /* Gray for bot messages */
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-900 text-gray-200 font-sans flex flex-col">
+    
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 gradient-bg py-4 shadow-lg z-10 rounded-b-lg">
+        <nav class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-white">Social Media Analyzer</h1>
+            <!-- <div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Home</button>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">About</button>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Contact</button>
+            </div> -->
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-20 mt-16 flex-grow">
+        
+        <!-- Chatbot Section -->
+        <section class="bg-gray-800 rounded-lg shadow-md p-6 h-full">
+            <h2 class="text-2xl font-semibold mb-4">Chat with the Analyzer</h2>
+
+            <div class="chat-box h-96 overflow-y-auto bg-gray-700 p-4 mb-4">
+                <div class="message bot-message">
+                    Hello! How can I assist you today?
+                </div>
+            </div>
+
+            <div class="input-container flex gap-4 mb-4">
+                <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off"
+                    class="flex-1 px-4 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">
+                <button id="send-btn"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out">Send</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg py-4 mt-8">
+        <p class="text-center text-gray-300">&copy; 2025 Social Media Analyzer. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Chatbot Functionality
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+        document.getElementById('user-input').addEventListener(' keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const userMessage = document.getElementById('user-input').value.trim();
+            if (userMessage === '') return;
+
+            appendMessage(userMessage, 'user-message');
+            document.getElementById('user-input').value = ''; // Clear input field
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('message', 'bot-message');
+            typingIndicator.textContent = 'Bot is typing...';
+            document.querySelector('.chat-box').appendChild(typingIndicator);
+            document.querySelector('.chat-box').scrollTop = document.querySelector('.chat-box').scrollHeight; // Scroll to latest message
+
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessage = data.reply || 'Sorry, I did not understand that.';
+                    appendMessage(botMessage, 'bot-message');
+                    typingIndicator.remove();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    typingIndicator.remove();
+                });
+        }
+
+        function appendMessage(message, messageType) {
+            const chatBox = document.querySelector('.chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', messageType);
+
+            if (messageType === 'user-message') {
+                messageDiv.classList.add('user-message');
+            } else {
+                messageDiv.classList.add('bot-message');
+            }
+
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to latest message
+        }
+    </script>
+</body>
+
+</html>
